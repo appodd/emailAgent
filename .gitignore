@@ -6,6 +6,12 @@
 # State files
 imap_state.json
 
+# Local RAG artifacts and memory DB
+email_vector_store/
+agent_memory.db
+agent_memory.db-shm
+agent_memory.db-wal
+
 # Python
 __pycache__/
 *.py[cod]

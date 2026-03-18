@@ -6,4 +6,5 @@ numpy>=1.26.0
 openai>=1.51.0
 python-dotenv>=1.0.1
 tenacity>=8.2.3
+streamlit>=1.32.0
 

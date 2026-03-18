@@ -107,6 +107,12 @@ def refine_with_similarity(bucket_key: str, items: List[EmailItem], sim_threshol
 
 
 def cluster_emails(items: List[EmailItem], config: Config) -> ClusterResult:
+    """Embedding 聚类；若 Embedding 不可用则自动降级为 TF-IDF。"""
+    try:
+        from .embeddings import embed_and_cluster
+        return embed_and_cluster(items, config)
+    except Exception as e:
+        print(f"[cluster_emails] Embedding 聚类失败，降级为 TF-IDF: {e}")
     buckets = pre_bucket(items, config)
     all_threads: List[EmailThread] = []
     for bkey, bucket_items in buckets.items():

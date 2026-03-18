@@ -24,6 +24,19 @@ class Config:
     state_path: str = "imap_state.json"
     request_timeout: int = 60
 
+    # Agent 模式配置
+    embedding_model: str = "text-embedding-3-small"
+    agent_max_iterations: int = 10
+
+    # RAG 向量库配置
+    email_store_path: str = "email_vector_store"
+    rag_bm25_weight: float = 0.4
+    rag_rerank_top_n: int = 3
+    rag_rerank_model: str = "BAAI/bge-reranker-v2-m3"
+
+    # Checkpoint 对话记忆
+    checkpoint_db_path: str = "agent_memory.db"
+
 
 def get_env(name: str, default: Optional[str] = None) -> str:
     val = os.getenv(name)
@@ -52,6 +65,11 @@ def load_config() -> Config:
     state_path = get_env("STATE_PATH", "imap_state.json")
     request_timeout = int(get_env("REQUEST_TIMEOUT", "60"))
 
+    embedding_model = get_env("EMBEDDING_MODEL", "text-embedding-3-small")
+    agent_max_iterations = int(get_env("AGENT_MAX_ITERATIONS", "10"))
+    email_store_path = get_env("EMAIL_STORE_PATH", "email_vector_store")
+    checkpoint_db_path = get_env("CHECKPOINT_DB_PATH", "agent_memory.db")
+
     return Config(
         imap_host=imap_host,
         imap_port=imap_port,
@@ -65,5 +83,9 @@ def load_config() -> Config:
         sim_threshold=sim_threshold,
         state_path=state_path,
         request_timeout=request_timeout,
+        embedding_model=embedding_model,
+        agent_max_iterations=agent_max_iterations,
+        email_store_path=email_store_path,
+        checkpoint_db_path=checkpoint_db_path,
     )
 

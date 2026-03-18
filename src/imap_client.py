@@ -1,10 +1,39 @@
 from __future__ import annotations
 
 import email
+import sys
 from datetime import datetime
 from email.header import decode_header, make_header
 from email.utils import parsedate_to_datetime, getaddresses
 from typing import List, Optional
+
+# ── Python 3.14 兼容补丁 ──────────────────────────────────────────────────────
+# Python 3.14 将 imaplib.IMAP4.file 改为只读属性，imapclient 3.x 仍用赋值语法
+# 打补丁使其使用 object.__setattr__ 写入底层 _file，与属性 getter 保持一致
+if sys.version_info >= (3, 14):
+    import socket as _socket
+    import imapclient.tls as _imapclient_tls
+    from imapclient.tls import wrap_socket as _wrap_socket
+
+    def _py314_open(self, host: str = "", port: int = 993, timeout=None) -> None:
+        self.host = host
+        self.port = port
+        sock = _socket.create_connection(
+            (host, port), timeout if timeout is not None else self._timeout
+        )
+        self.sock = _wrap_socket(sock, self.ssl_context, host)
+        object.__setattr__(self, "_file", self.sock.makefile("rb"))
+
+    def _py314_read(self, size: int) -> bytes:
+        return object.__getattribute__(self, "_file").read(size)
+
+    def _py314_readline(self) -> bytes:
+        return object.__getattribute__(self, "_file").readline()
+
+    _imapclient_tls.IMAP4_TLS.open     = _py314_open
+    _imapclient_tls.IMAP4_TLS.read     = _py314_read
+    _imapclient_tls.IMAP4_TLS.readline = _py314_readline
+# ──────────────────────────────────────────────────────────────────────────────
 
 from imapclient import IMAPClient
 
@@ -126,6 +155,8 @@ class IMAPFetcher:
                     text=text,
                     mailbox=mbox,
                     message_id=msg.get("Message-Id"),
+                    in_reply_to=msg.get("In-Reply-To"),
+                    references=msg.get("References"),
                     to_addrs=to_addrs,
                     cc_addrs=cc_addrs,
                 )

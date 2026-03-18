@@ -1,7 +1,7 @@
 [project]
 name = "email-agent"
-version = "0.1.0"
-description = "一个智能邮件处理工具，通过 IMAP 拉取未读邮件，使用智能聚类算法将相关邮件分组，并利用 LLM 生成优先级待办清单或邮件摘要"
+version = "0.2.0"
+description = "全功能邮件助理：LangGraph Agent 架构，支持待办提取、会议识别、草拟回复、跟进追踪、RAG 历史检索"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -13,6 +13,17 @@ dependencies = [
     "openai>=1.51.0",
     "python-dotenv>=1.0.1",
     "tenacity>=8.2.3",
+    # LangChain / LangGraph
+    "langchain>=0.3",
+    "langchain-openai>=0.2",
+    "langchain-community>=0.3",
+    "langgraph>=0.2",
+    # Vector store & retrieval
+    "faiss-cpu>=1.8",
+    "rank-bm25>=0.2",
+    "sentence-transformers>=3",
+    # Pydantic v2 (LangChain dependency)
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
